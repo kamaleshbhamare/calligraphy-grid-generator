@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Line Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- <div class="controls">
+        Lines:
+        <input type="number" id="lineCount" value="10">
+    
+        Length (mm):
+        <input type="number" id="lineLength" value="100">
+    
+        Angle:
+        <input type="number" id="angle" value="45">
+    
+        Spacing (mm):
+        <input type="number" id="spacing" value="10">
+    
+        <button onclick="generateLines()">Generate</button>
+        <button onclick="window.print()">Print</button>
+    </div> -->
+
+    <div class="wizard">
+
+        <div class="step " id="step1">
+            <h2>Page Settings</h2>
+
+            <label>Orientation</label>
+            <select>
+                <option>Portrait</option>
+                <option>Landscape</option>
+            </select>
+            
+            <label>Rows</label>
+            <input type="number">
+            
+            <div class="nav-buttons">
+                <span></span>
+                <button class="next-btn">Next</button>
+            </div>
+        </div>
+
+        <div class="step active" id="step2">
+            <h2>Letter Structure</h2>
+            
+            <div class="options-container">
+                <div class="label-span-group">
+                    <label>Base line</label>
+                    <span>This line represents the base line of the text.</span>
+                </div>
+                <input id="BaseLineCheckbox" type="checkbox" class="toggle-option" data-target="BaseLine" disabled checked>
+                <div class="option-value-container"></div>
+            </div>
+            
+            <div class="options-container">
+                <div class="label-span-group">
+                    <label>Waist line</label>
+                    <span>Distance from base line to waist line is called "X Height".</span>
+                </div>
+                <input id="WaistLineHeightCheckbox" 
+                    type="checkbox" 
+                    class="toggle-option" 
+                    data-target="WaistLineHeight" 
+                    data-uncheck="AscenderLine1Checkbox"
+                    checked>
+                <div class="option-value-container">
+                    <input id="WaistLineHeight" class="options" type="number" value="10">
+                </div>
+            </div>
+            
+            <div class="options-container">
+                <div class="label-span-group">
+                    <label>Ascender Line 1</label>
+                    <span>This is distance from the Waist line</span>
+                </div>
+                <input id="AscenderLine1Checkbox"
+                    type="checkbox"
+                    class="toggle-option"
+                    data-target="AscenderLine1"
+                    data-uncheck="AscenderLine2Checkbox"
+                    checked>
+                <div class="option-value-container">
+                    <input id="AscenderLine1" class="options" type="number" value="10">
+                </div>
+            </div>
+            
+            <div class="options-container">
+                <div class="label-span-group">
+                    <label>Ascender Line 2</label>
+                    <span>This is distance from Ascender Line 1</span>
+                </div>
+                <input id="AscenderLine2Checkbox"
+                    type="checkbox"
+                    class="toggle-option"
+                    data-target="AscenderLine2"
+                    data-requires="AscenderLine1Checkbox"
+                    checked>
+                <div class="option-value-container">
+                    <input id="AscenderLine2" class="options" type="number" value="5">
+                </div>
+            </div>
+
+            <div class="options-container">
+                <div class="label-span-group">
+                    <label>Descender Line 1</label>
+                    <span>This is distance from Base Line</span>
+                </div>
+                <input id="DescenderLine1Checkbox"
+                    type="checkbox"
+                    class="toggle-option"
+                    data-target="DescenderLine1"
+                    data-uncheck="DescenderLine2Checkbox"
+                    checked>
+                <div class="option-value-container">
+                    <input id="DescenderLine1" class="options" type="number" value="10">
+                </div>
+            </div>
+
+            <div class="options-container">
+                <div class="label-span-group">
+                    <label>Descender Line 2</label>
+                    <span>This is distance from Descender Line 1</span>
+                </div>
+                <input id="DescenderLine2Checkbox"
+                    type="checkbox"
+                    class="toggle-option"
+                    data-target="DescenderLine2"
+                    data-requires="DescenderLine1Checkbox"
+                    checked>
+                <div class="option-value-container">
+                    <input id="DescenderLine2" class="options" type="number" value="5">
+                </div>
+            </div>
+            
+            <div class="options-container">
+                <div class="label-span-group">
+                    <label>Space between two rows</label>
+                    <span>This is space between two text rows</span>
+                </div>
+                <input id="SpaceBetweenRowsCheckbox"
+                    type="checkbox"
+                    class="toggle-option"
+                    data-target="SpaceBetweenRows"
+                    checked disabled>
+                <div class="option-value-container">
+                    <input id="SpaceBetweenRows" class="options" type="number" value="10">
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="back-btn">Back</button>
+                <button class="next-btn">Next</button>
+            </div>
+        </div>
+    
+        <div class="step" id="step3">
+            <h2>Slant Guides</h2>
+
+            <div class="options-container">
+                <div class="label-span-group">
+                <label>Slant Line Angle</label>
+                    <span>This is the angle at which the slant lines are drawn.</span>
+                </div>
+                <input id="SlantLineAngleCheckbox"
+                    type="checkbox"
+                    class="toggle-option"
+                    data-target="SlantLineAngle"
+                    data-uncheck="SlantLinesCheckbox"
+
+                    checked>
+                <div class="option-value-container">
+                    <input id="SlantLineAngle" class="options" type="number" value="55">
+                </div>
+            </div>
+
+            <div class="options-container">
+                <div class="label-span-group">
+                    <label>Slant Lines Spacing</label>
+                    <span>This is the spacing between the slant lines.</span>
+                </div>
+                <input id="SlantLinesCheckbox"
+                    type="checkbox"
+                    class="toggle-option"
+                    data-target="SlantLines"
+                    data-requires="SlantLineAngleCheckbox"
+                    checked>
+                <div class="option-value-container">
+                    <input id="SlantLinesSpacing" class="options" type="number" value="10">
+                </div>
+            </div>
+
+            
+            <div class="nav-buttons">
+                <button class="back-btn">Back</button>
+                <button class="next-btn">Next</button>
+            </div>
+        </div>
+
+        <div class="step" id="step4">
+
+            <h2>Preview & Print</h2>
+            
+            <div id="printArea">
+                <svg id="paper" viewBox="0 0 210 297"></svg>
+            </div>
+            <div class="nav-buttons">
+                <button class="back-btn">Back</button>
+                <button class="print-btn" onclick="window.print()">Print</button>
+                <button class="next-btn" disabled>Next</button>
+            </div>
+        </div>
+
+    </div>
+    
+<script>
+    /*
+function generateLines() {
+
+    const svg = document.getElementById("paper");
+    svg.innerHTML = "";
+
+    const count = Number(document.getElementById("lineCount").value);
+    const length = Number(document.getElementById("lineLength").value);
+    const angle = Number(document.getElementById("angle").value);
+    const spacing = Number(document.getElementById("spacing").value);
+
+    const radians = angle * Math.PI / 180;
+
+    for(let i = 0; i < count; i++) {
+
+        const x1 = 20;
+        const y1 = 20 + i * spacing;
+
+        const x2 = x1 + length * Math.cos(radians);
+        const y2 = y1 - length * Math.sin(radians);
+
+        const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+
+        line.setAttribute("stroke", "black");
+        line.setAttribute("stroke-width", "0.5");
+
+        svg.appendChild(line);
+    }
+}
+*/
+</script>
+
+</body>
+</html>
