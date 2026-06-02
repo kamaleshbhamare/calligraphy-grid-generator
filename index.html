@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Calligraphy Grid Generator</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+    <script src="script.js" defer></script>    
 </head>
 <body>
     <h2>Calligraphy Grid Generator</h2>
@@ -18,7 +18,8 @@
 
             <input type="radio" id="landscape" name="orientation" value="landscape">
             <label for="landscape">Landscape</label>
-
+            
+            <button class="action-button" id="GenerateBtn">Generate Grid</button>
         </div>
         <div class="settings">
 
@@ -28,7 +29,7 @@
 
                 <div class="input-row">
                     <label>X Height</label>
-                    <input type="number" value="10">
+                    <input id="XHeight" type="number" value="10">
                 </div>
             </div>
 
@@ -40,22 +41,22 @@
 
                     <div class="input-row">
                         <label>Ascender 1</label>
-                        <input type="number" value="15">
+                        <input id="Asc1" type="number" value="10">
                     </div>
 
                     <div class="input-row">
                         <label>Descender 1</label>
-                        <input type="number" value="5">
+                        <input id="Desc1" type="number" value="10">
                     </div>
 
                     <div class="input-row">
                         <label>Ascender 2</label>
-                        <input type="number" value="20">
+                        <input id="Asc2" type="number" value="5">
                     </div>
 
                     <div class="input-row">
                         <label>Descender 2</label>
-                        <input type="number" value="8">
+                        <input id="Desc2" type="number" value="5">
                     </div>
 
                 </div>
@@ -69,18 +70,20 @@
 
                     <div class="input-row">
                         <label>Number of Rows</label>
-                        <input type="number" value="10">
+                        <input id="NumRows" type="number" value="10">
                     </div>
 
                     <div class="input-row">
                         <label>Row Gaps</label>
-                        <input type="number" value="10">
+                        <input id="RowGaps" type="number" value="10">
                     </div>
 
                     <div class="input-row">
                         <label>Vertical Alignment</label>
-                        <input type="number" value="0">
+                        <input id="VertAlign" type="number" value="0">
                     </div>
+
+
 
                 </div>
             </div>
@@ -93,12 +96,12 @@
 
                     <div class="input-row">
                         <label>Slant Angle</label>
-                        <input type="number" value="55">
+                        <input id="SlantAngle" type="number" value="55">
                     </div>
 
                     <div class="input-row">
                         <label>Slant Gap</label>
-                        <input type="number" value="10">
+                        <input id="SlantGap" type="number" value="10">
                     </div>
 
                 </div>
@@ -110,5 +113,15 @@
     <div id="printArea">
         <svg id="paper" viewBox="0 0 210 297"></svg>
     </div>
+
+    <div>
+            <button class="action-button" id="PrintBtn">Print</button>
+    </div>
+
+    <div id="footer">
+        <p>Created by Kamalesh Bhamare</p>
+    </div>
+
 </body>
+
 </html>

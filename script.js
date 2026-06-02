@@ -1,102 +1,5 @@
 
-/*
-Need to create wizard for these steps:
-Step 1 → Page Settings
-Step 2 → Letter Structure
-Step 3 → Slant Guides
-Step 4 → Line Visibility
-Step 5 → Line Thickness
-Step 6 → Preview & Print
-*/
 
-const steps = document.querySelectorAll(".step");
-
-let currentStep = 1;
-
-function showStep(index) {
-    steps.forEach(step => step.classList.remove("active"));
-    steps[index].classList.add("active");
-}
-
-document.addEventListener("click", function (e) {
-
-    if (e.target.classList.contains("next-btn")) {
-        if (currentStep < steps.length - 1) {
-            currentStep++;
-            showStep(currentStep);
-            // Generate grid when reaching the preview step
-            if (currentStep === steps.length - 1) {
-                generateGrid();
-            }
-        }
-    }
-
-    if (e.target.classList.contains("back-btn")) {
-        if (currentStep > 0) {
-            currentStep--;
-            showStep(currentStep);
-        }
-    }
-});
-
-document.querySelectorAll(".toggle-option")
-    .forEach(toggle => {
-
-        toggle.addEventListener("change", function () {
-
-            // Show / Hide associated input
-            const target = document.getElementById(this.dataset.target);
-
-            if (target) {
-                target.classList.toggle(
-                    "hide",
-                    !this.checked
-                );
-            }
-
-            // If checked, automatically check required parents
-            if (this.checked && this.dataset.requires) {
-                const requiredIds = this.dataset.requires.split(",");
-                requiredIds.forEach(id => {
-                    const requiredCheckbox = document.getElementById(id.trim());
-
-                    if (requiredCheckbox && !requiredCheckbox.checked) {
-                        requiredCheckbox.checked = true;
-                        requiredCheckbox.dispatchEvent(
-                            new Event("change")
-                        );
-                    }
-                });
-            }
-
-            // If unchecked, automatically uncheck children
-            if (!this.checked && this.dataset.uncheck) {
-                const childIds = this.dataset.uncheck.split(",");
-                childIds.forEach(id => {
-                    const childCheckbox = document.getElementById(id.trim());
-                    if (childCheckbox && childCheckbox.checked) {
-                        childCheckbox.checked = false;
-                        childCheckbox.dispatchEvent(
-                            new Event("change")
-                        );
-                    }
-                });
-            }
-        });
-
-        // Run once during page load
-        toggle.dispatchEvent(new Event("change"));
-
-    });
-
-// Add event listeners to number inputs to regenerate grid on change
-document.querySelectorAll(".options").forEach(input => {
-    input.addEventListener("change", function () {
-        if (currentStep === steps.length - 1) {
-            generateGrid();
-        }
-    });
-});
 
 function generateGrid() {
     const svg = document.getElementById("paper");
@@ -106,7 +9,7 @@ function generateGrid() {
     // Calculate space between base lines based on lines selected and their distance
     // Default margin between lines if only one line is selected
 
-    const marginBetweenLines = parseInt(document.getElementById("SpaceBetweenRows").value);
+    const marginBetweenLines = parseInt(document.getElementById("RowGaps").value);
     let baseLineSpacing = 0;
     let baseLineStartY = 0;
     let waistLineStartY = 0;
@@ -115,29 +18,29 @@ function generateGrid() {
     let DescenderLine1StartY = 0;
     let DescenderLine2StartY = 0;
 
-    if (document.getElementById("AscenderLine2Checkbox").checked) {
-        baseLineSpacing += parseInt(document.getElementById("AscenderLine2").value);
+    if (document.getElementById("Asc2").value > 0) {
+        baseLineSpacing += parseInt(document.getElementById("Asc2").value);
         AscenderLine1StartY += baseLineSpacing;
     }
 
-    if (document.getElementById("AscenderLine1Checkbox").checked) {
-        baseLineSpacing += parseInt(document.getElementById("AscenderLine1").value);
+    if (document.getElementById("Asc1").value > 0) {
+        baseLineSpacing += parseInt(document.getElementById("Asc1").value);
     }
 
-    if (document.getElementById("WaistLineHeightCheckbox").checked) {
+    if (document.getElementById("XHeight").value > 0) {
         waistLineStartY += baseLineSpacing;
-        baseLineSpacing += parseInt(document.getElementById("WaistLineHeight").value);
+        baseLineSpacing += parseInt(document.getElementById("XHeight").value);
     }
 
     baseLineStartY += baseLineSpacing;
 
-    if (document.getElementById("DescenderLine1Checkbox").checked) {
-        baseLineSpacing += parseInt(document.getElementById("DescenderLine1").value);
+    if (document.getElementById("Desc1").value > 0) {
+        baseLineSpacing += parseInt(document.getElementById("Desc1").value);
         DescenderLine1StartY += baseLineSpacing;
     }
 
-    if (document.getElementById("DescenderLine2Checkbox").checked) {
-        baseLineSpacing += parseInt(document.getElementById("DescenderLine2").value);
+    if (document.getElementById("Desc2").value > 0) {
+        baseLineSpacing += parseInt(document.getElementById("Desc2").value);
         DescenderLine2StartY += baseLineSpacing;
     }
 
@@ -156,7 +59,7 @@ function generateGrid() {
     }
 
     // Draw Waist Lines
-    if (document.getElementById("WaistLineHeightCheckbox").checked) {
+    if (document.getElementById("XHeight").value > 0) {
         for (let y = waistLineStartY; y < 297; y += baseLineSpacing) {
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             line.setAttribute("x1", "0");
@@ -170,7 +73,7 @@ function generateGrid() {
     }
 
     // Draw Ascender 1 Lines
-    if (document.getElementById("AscenderLine1Checkbox").checked) {
+    if (document.getElementById("Asc1").value > 0) {
         for (let y = AscenderLine1StartY; y < 297; y += baseLineSpacing) {
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             line.setAttribute("x1", "0");
@@ -184,21 +87,21 @@ function generateGrid() {
     }
 
     // Draw Ascender 2 Lines
-    if (document.getElementById("AscenderLine2Checkbox").checked) {
+    if (document.getElementById("Asc2").value > 0) {
         for (let y = AscenderLine2StartY; y < 297; y += baseLineSpacing) {
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             line.setAttribute("x1", "0");
             line.setAttribute("y1", y);
             line.setAttribute("x2", "210");
             line.setAttribute("y2", y);
-            line.setAttribute("stroke", "#555");
+            line.setAttribute("stroke", "red");
             line.setAttribute("stroke-width", "0.2");
             svg.appendChild(line);
         }
     }
 
     // Draw Descender 1 Lines
-    if (document.getElementById("DescenderLine1Checkbox").checked) {
+    if (document.getElementById("Desc1").value > 0) {
         for (let y = DescenderLine1StartY; y < 297; y += baseLineSpacing) {
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             line.setAttribute("x1", "0");
@@ -212,7 +115,7 @@ function generateGrid() {
     }
 
     // Draw Descender 2 Lines
-    if (document.getElementById("DescenderLine2Checkbox").checked) {
+    if (document.getElementById("Desc2").value > 0) {
         for (let y = DescenderLine2StartY; y < 297; y += baseLineSpacing) {
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             line.setAttribute("x1", "0");
@@ -225,8 +128,8 @@ function generateGrid() {
         }
     }
 
-    const angle = parseInt(document.getElementById("SlantLineAngle").value);
-    const spacing = parseInt(document.getElementById("SlantLinesSpacing").value);
+    const angle = parseInt(document.getElementById("SlantAngle").value);
+    const spacing = parseInt(document.getElementById("SlantGap").value);
 
     const width = 210;   // A4 portrait
     const height = 297;
@@ -280,3 +183,17 @@ function generateGrid() {
 
 }
 
+// Generate the grid based on user input
+document.getElementById("GenerateBtn").addEventListener("click", generateGrid);
+
+// Print functionality
+document.getElementById("PrintBtn").addEventListener("click", function () {
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write('<html><head><title>Print Grid</title></head><body>');
+    printWindow.document.write(document.getElementById("paper").outerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+});

@@ -51,6 +51,31 @@ body {
     border-color: #1976d2;
 }
 
+/* Generate button: match segmented-control buttons but green */
+.action-button {
+    padding: 12px 14px;
+    text-align: center;
+    border: 1px solid #2e7d32;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #2e7d32;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: all 0.16s ease;
+    user-select: none;
+}
+
+.action-button:hover {
+    background: #2fa14a;
+    border-color: #2fa14a;
+    box-shadow: 0 2px 6px rgba(46, 125, 50, 0.25);
+}
+
+.action-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46,125,50,0.12);
+}
+
 /* selected state */
 .segmented-control input:checked + label {
     background: #1976d2;
@@ -94,12 +119,17 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    background: #f9f9f9;
+   
+    border-radius: 6px;
 }
 
 /* Label */
 .input-row label {
     font-size: 1rem;
     flex: 1;
+    padding: 8px;
+    
 }
 
 /* Fixed input */
@@ -121,6 +151,7 @@ body {
         gap: 12px;
     }
 }
+
 #printArea {
     width: 100%;
     max-width: 900px;
