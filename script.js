@@ -1,199 +1,206 @@
-
-
-
 function generateGrid() {
-    const svg = document.getElementById("paper");
-    svg.innerHTML = ""; // Clear previous grid
+  const svg = document.getElementById('paper');
+  svg.innerHTML = ''; // Clear previous grid
 
-    // Draw Base Lines
-    // Calculate space between base lines based on lines selected and their distance
-    // Default margin between lines if only one line is selected
+  // Draw Base Lines
+  // Calculate space between base lines based on lines selected and their distance
+  // Default margin between lines if only one line is selected
 
-    const marginBetweenLines = parseInt(document.getElementById("RowGaps").value);
-    let baseLineSpacing = 0;
-    let baseLineStartY = 0;
-    let waistLineStartY = 0;
-    let AscenderLine1StartY = 0;
-    let AscenderLine2StartY = 0;
-    let DescenderLine1StartY = 0;
-    let DescenderLine2StartY = 0;
+  const marginBetweenLines = parseInt(document.getElementById('RowGaps').value);
+  const orientation = document.querySelector('input[name="orientation"]:checked').value;
+  const width = orientation === 'landscape' ? 297 : 210;
+  const height = orientation === 'landscape' ? 210 : 297;
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
-    if (document.getElementById("Asc2").value > 0) {
-        baseLineSpacing += parseInt(document.getElementById("Asc2").value);
-        AscenderLine1StartY += baseLineSpacing;
+  const printArea = document.getElementById('printArea');
+  printArea.classList.toggle('landscape', orientation === 'landscape');
+  printArea.classList.toggle('portrait', orientation !== 'landscape');
+
+  let baseLineSpacing = 0;
+  let baseLineStartY = marginBetweenLines;
+  let waistLineStartY = marginBetweenLines;
+  let AscenderLine1StartY = marginBetweenLines;
+  let AscenderLine2StartY = marginBetweenLines;
+  let DescenderLine1StartY = marginBetweenLines;
+  let DescenderLine2StartY = marginBetweenLines;
+
+  if (document.getElementById('Asc2').value > 0) {
+    baseLineSpacing += parseInt(document.getElementById('Asc2').value);
+    AscenderLine1StartY += baseLineSpacing;
+  }
+
+  if (document.getElementById('Asc1').value > 0) {
+    baseLineSpacing += parseInt(document.getElementById('Asc1').value);
+  }
+
+  if (document.getElementById('XHeight').value > 0) {
+    waistLineStartY += baseLineSpacing;
+    baseLineSpacing += parseInt(document.getElementById('XHeight').value);
+  }
+
+  baseLineStartY += baseLineSpacing;
+
+  if (document.getElementById('Desc1').value > 0) {
+    baseLineSpacing += parseInt(document.getElementById('Desc1').value);
+    DescenderLine1StartY += baseLineSpacing;
+  }
+
+  if (document.getElementById('Desc2').value > 0) {
+    baseLineSpacing += parseInt(document.getElementById('Desc2').value);
+    DescenderLine2StartY += baseLineSpacing;
+  }
+
+  const rows = Math.max(0, parseInt(document.getElementById('NumRows').value) || 0);
+  baseLineSpacing += marginBetweenLines;
+
+  // Draw Base Lines
+  for (let row = 0; row < rows; row++) {
+    const y = baseLineStartY + row * baseLineSpacing;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', '0');
+    line.setAttribute('y1', y);
+    line.setAttribute('x2', width);
+    line.setAttribute('y2', y);
+    line.setAttribute('stroke', '#555');
+    line.setAttribute('stroke-width', '0.2');
+    svg.appendChild(line);
+  }
+
+  // Draw Waist Lines
+  if (document.getElementById('XHeight').value > 0) {
+    for (let row = 0; row < rows; row++) {
+      const y = waistLineStartY + row * baseLineSpacing;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', '0');
+      line.setAttribute('y1', y);
+      line.setAttribute('x2', width);
+      line.setAttribute('y2', y);
+      line.setAttribute('stroke', '#555');
+      line.setAttribute('stroke-width', '0.2');
+      svg.appendChild(line);
     }
+  }
 
-    if (document.getElementById("Asc1").value > 0) {
-        baseLineSpacing += parseInt(document.getElementById("Asc1").value);
+  // Draw Ascender 1 Lines
+  if (document.getElementById('Asc1').value > 0) {
+    for (let row = 0; row < rows; row++) {
+      const y = AscenderLine1StartY + row * baseLineSpacing;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', '0');
+      line.setAttribute('y1', y);
+      line.setAttribute('x2', width);
+      line.setAttribute('y2', y);
+      line.setAttribute('stroke', '#555');
+      line.setAttribute('stroke-width', '0.2');
+      svg.appendChild(line);
     }
+  }
 
-    if (document.getElementById("XHeight").value > 0) {
-        waistLineStartY += baseLineSpacing;
-        baseLineSpacing += parseInt(document.getElementById("XHeight").value);
+  // Draw Ascender 2 Lines
+  if (document.getElementById('Asc2').value > 0) {
+    for (let row = 0; row < rows; row++) {
+      const y = AscenderLine2StartY + row * baseLineSpacing;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', '0');
+      line.setAttribute('y1', y);
+      line.setAttribute('x2', width);
+      line.setAttribute('y2', y);
+      line.setAttribute('stroke', 'red');
+      line.setAttribute('stroke-width', '0.2');
+      svg.appendChild(line);
     }
+  }
 
-    baseLineStartY += baseLineSpacing;
-
-    if (document.getElementById("Desc1").value > 0) {
-        baseLineSpacing += parseInt(document.getElementById("Desc1").value);
-        DescenderLine1StartY += baseLineSpacing;
+  // Draw Descender 1 Lines
+  if (document.getElementById('Desc1').value > 0) {
+    for (let row = 0; row < rows; row++) {
+      const y = DescenderLine1StartY + row * baseLineSpacing;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', '0');
+      line.setAttribute('y1', y);
+      line.setAttribute('x2', width);
+      line.setAttribute('y2', y);
+      line.setAttribute('stroke', '#555');
+      line.setAttribute('stroke-width', '0.2');
+      svg.appendChild(line);
     }
+  }
 
-    if (document.getElementById("Desc2").value > 0) {
-        baseLineSpacing += parseInt(document.getElementById("Desc2").value);
-        DescenderLine2StartY += baseLineSpacing;
+  // Draw Descender 2 Lines
+  if (document.getElementById('Desc2').value > 0) {
+    for (let row = 0; row < rows; row++) {
+      const y = DescenderLine2StartY + row * baseLineSpacing;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', '0');
+      line.setAttribute('y1', y);
+      line.setAttribute('x2', width);
+      line.setAttribute('y2', y);
+      line.setAttribute('stroke', '#555');
+      line.setAttribute('stroke-width', '0.2');
+      svg.appendChild(line);
     }
+  }
 
-    baseLineSpacing += marginBetweenLines;
+  const angle = parseInt(document.getElementById('SlantAngle').value);
+  const spacing = parseInt(document.getElementById('SlantGap').value);
 
-    // Draw Base Lines
-    for (let y = baseLineStartY; y < 297; y += baseLineSpacing) {
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", "0");
-        line.setAttribute("y1", y);
-        line.setAttribute("x2", "210");
-        line.setAttribute("y2", y);
-        line.setAttribute("stroke", "#555");
-        line.setAttribute("stroke-width", "0.2");
-        svg.appendChild(line);
-    }
+  const theta = (angle * Math.PI) / 180;
 
-    // Draw Waist Lines
-    if (document.getElementById("XHeight").value > 0) {
-        for (let y = waistLineStartY; y < 297; y += baseLineSpacing) {
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", "0");
-            line.setAttribute("y1", y);
-            line.setAttribute("x2", "210");
-            line.setAttribute("y2", y);
-            line.setAttribute("stroke", "#555");
-            line.setAttribute("stroke-width", "0.2");
-            svg.appendChild(line);
-        }
-    }
+  const dx = Math.cos(theta);
+  const dy = -Math.sin(theta);
 
-    // Draw Ascender 1 Lines
-    if (document.getElementById("Asc1").value > 0) {
-        for (let y = AscenderLine1StartY; y < 297; y += baseLineSpacing) {
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", "0");
-            line.setAttribute("y1", y);
-            line.setAttribute("x2", "210");
-            line.setAttribute("y2", y);
-            line.setAttribute("stroke", "#555");
-            line.setAttribute("stroke-width", "0.2");
-            svg.appendChild(line);
-        }
-    }
+  const px = Math.sin(theta);
+  const py = Math.cos(theta);
 
-    // Draw Ascender 2 Lines
-    if (document.getElementById("Asc2").value > 0) {
-        for (let y = AscenderLine2StartY; y < 297; y += baseLineSpacing) {
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", "0");
-            line.setAttribute("y1", y);
-            line.setAttribute("x2", "210");
-            line.setAttribute("y2", y);
-            line.setAttribute("stroke", "red");
-            line.setAttribute("stroke-width", "0.2");
-            svg.appendChild(line);
-        }
-    }
+  const lineLength = 1000;
 
-    // Draw Descender 1 Lines
-    if (document.getElementById("Desc1").value > 0) {
-        for (let y = DescenderLine1StartY; y < 297; y += baseLineSpacing) {
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", "0");
-            line.setAttribute("y1", y);
-            line.setAttribute("x2", "210");
-            line.setAttribute("y2", y);
-            line.setAttribute("stroke", "#555");
-            line.setAttribute("stroke-width", "0.2");
-            svg.appendChild(line);
-        }
-    }
+  const count = Math.ceil((width * Math.abs(px) + height * Math.abs(py)) / spacing) + 20;
 
-    // Draw Descender 2 Lines
-    if (document.getElementById("Desc2").value > 0) {
-        for (let y = DescenderLine2StartY; y < 297; y += baseLineSpacing) {
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", "0");
-            line.setAttribute("y1", y);
-            line.setAttribute("x2", "210");
-            line.setAttribute("y2", y);
-            line.setAttribute("stroke", "#555");
-            line.setAttribute("stroke-width", "0.2");
-            svg.appendChild(line);
-        }
-    }
+  for (let i = -10; i < count; i++) {
+    const offset = i * spacing;
 
-    const angle = parseInt(document.getElementById("SlantAngle").value);
-    const spacing = parseInt(document.getElementById("SlantGap").value);
+    const cx = offset * px;
+    const cy = offset * py;
 
-    const width = 210;   // A4 portrait
-    const height = 297;
+    const x1 = cx - dx * lineLength;
+    const y1 = cy - dy * lineLength;
 
-    const theta = angle * Math.PI / 180;
+    const x2 = cx + dx * lineLength;
+    const y2 = cy + dy * lineLength;
 
-    const dx = Math.cos(theta);
-    const dy = -Math.sin(theta);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 
-    const px = Math.sin(theta);
-    const py = Math.cos(theta);
+    line.setAttribute('x1', x1);
+    line.setAttribute('y1', y1);
 
-    const lineLength = 1000;
+    line.setAttribute('x2', x2);
+    line.setAttribute('y2', y2);
 
-    const count =
-        Math.ceil(
-            (width * Math.abs(px) +
-                height * Math.abs(py))
-            / spacing
-        ) + 20;
+    line.setAttribute('stroke', '#bbb');
+    line.setAttribute('stroke-width', '0.2');
 
-    for (let i = -10; i < count; i++) {
-
-        const offset = i * spacing;
-
-        const cx = offset * px;
-        const cy = offset * py;
-
-        const x1 = cx - dx * lineLength;
-        const y1 = cy - dy * lineLength;
-
-        const x2 = cx + dx * lineLength;
-        const y2 = cy + dy * lineLength;
-
-        const line = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
-        );
-
-        line.setAttribute("x1", x1);
-        line.setAttribute("y1", y1);
-
-        line.setAttribute("x2", x2);
-        line.setAttribute("y2", y2);
-
-        line.setAttribute("stroke", "#bbb");
-        line.setAttribute("stroke-width", "0.2");
-
-        svg.appendChild(line);
-    }
-
+    svg.appendChild(line);
+  }
 }
 
 // Generate the grid based on user input
-document.getElementById("GenerateBtn").addEventListener("click", generateGrid);
+const generateControls = document.querySelectorAll('.controls input, .controls select');
+generateControls.forEach((control) => {
+  control.addEventListener('input', generateGrid);
+  control.addEventListener('change', generateGrid);
+});
 
 // Print functionality
-document.getElementById("PrintBtn").addEventListener("click", function () {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write('<html><head><title>Print Grid</title></head><body>');
-    printWindow.document.write(document.getElementById("paper").outerHTML);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+document.getElementById('PrintBtn').addEventListener('click', function () {
+  window.print();
+  //   const printWindow = window.open('', '_blank');
+  //   printWindow.document.write('<html><head><title>Print Grid</title></head><body>');
+  //   printWindow.document.write(document.getElementById('paper').outerHTML);
+  //   printWindow.document.write('</body></html>');
+  //   printWindow.document.close();
+  //   printWindow.focus();
+  //   printWindow.print();
+  //   printWindow.close();
 });
+
+generateGrid();

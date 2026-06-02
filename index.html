@@ -1,127 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Calligraphy Grid Generator</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>    
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
     <h2>Calligraphy Grid Generator</h2>
     <div class="controls">
+      <div class="segmented-control">
+        <input type="radio" id="portrait" name="orientation" value="portrait" checked />
+        <label for="portrait">Portrait</label>
 
-        <div class="segmented-control">
+        <input type="radio" id="landscape" name="orientation" value="landscape" />
+        <label for="landscape">Landscape</label>
 
-            <input type="radio" id="portrait" name="orientation" value="portrait" checked>
-            <label for="portrait">Portrait</label>
+        <button class="action-button" id="PrintBtn">Print</button>
+      </div>
+      <div class="settings">
+        <!-- Group 1 -->
+        <div class="group">
+          <h3>X Height</h3>
 
-            <input type="radio" id="landscape" name="orientation" value="landscape">
-            <label for="landscape">Landscape</label>
-            
-            <button class="action-button" id="GenerateBtn">Generate Grid</button>
+          <div class="input-row">
+            <label>X Height</label>
+            <input id="XHeight" type="number" value="10" />
+          </div>
         </div>
-        <div class="settings">
 
-            <!-- Group 1 -->
-            <div class="group">
-                <h3>X Height</h3>
+        <!-- Group 2 -->
+        <div class="group">
+          <h3>Ascender / Descender</h3>
 
-                <div class="input-row">
-                    <label>X Height</label>
-                    <input id="XHeight" type="number" value="10">
-                </div>
+          <div class="grid-2">
+            <div class="input-row">
+              <label>Ascender 1</label>
+              <input id="Asc1" type="number" value="10" />
             </div>
 
-            <!-- Group 2 -->
-            <div class="group">
-                <h3>Ascender / Descender</h3>
-
-                <div class="grid-2">
-
-                    <div class="input-row">
-                        <label>Ascender 1</label>
-                        <input id="Asc1" type="number" value="10">
-                    </div>
-
-                    <div class="input-row">
-                        <label>Descender 1</label>
-                        <input id="Desc1" type="number" value="10">
-                    </div>
-
-                    <div class="input-row">
-                        <label>Ascender 2</label>
-                        <input id="Asc2" type="number" value="5">
-                    </div>
-
-                    <div class="input-row">
-                        <label>Descender 2</label>
-                        <input id="Desc2" type="number" value="5">
-                    </div>
-
-                </div>
+            <div class="input-row">
+              <label>Descender 1</label>
+              <input id="Desc1" type="number" value="10" />
             </div>
 
-            <!-- Group 3 -->
-            <div class="group">
-                <h3>Layout</h3>
-
-                <div class="grid-2">
-
-                    <div class="input-row">
-                        <label>Number of Rows</label>
-                        <input id="NumRows" type="number" value="10">
-                    </div>
-
-                    <div class="input-row">
-                        <label>Row Gaps</label>
-                        <input id="RowGaps" type="number" value="10">
-                    </div>
-
-                    <div class="input-row">
-                        <label>Vertical Alignment</label>
-                        <input id="VertAlign" type="number" value="0">
-                    </div>
-
-
-
-                </div>
+            <div class="input-row">
+              <label>Ascender 2</label>
+              <input id="Asc2" type="number" value="5" />
             </div>
 
-            <!-- Group 4 -->
-            <div class="group">
-                <h3>Slant</h3>
-
-                <div class="grid-2">
-
-                    <div class="input-row">
-                        <label>Slant Angle</label>
-                        <input id="SlantAngle" type="number" value="55">
-                    </div>
-
-                    <div class="input-row">
-                        <label>Slant Gap</label>
-                        <input id="SlantGap" type="number" value="10">
-                    </div>
-
-                </div>
+            <div class="input-row">
+              <label>Descender 2</label>
+              <input id="Desc2" type="number" value="5" />
             </div>
-
+          </div>
         </div>
+
+        <!-- Group 3 -->
+        <div class="group">
+          <h3>Layout</h3>
+
+          <div class="grid-2">
+            <div class="input-row">
+              <label>Number of Rows</label>
+              <input id="NumRows" type="number" value="10" />
+            </div>
+
+            <div class="input-row">
+              <label>Row Gaps</label>
+              <input id="RowGaps" type="number" value="10" />
+            </div>
+
+            <div class="input-row">
+              <label>Vertical Alignment</label>
+              <select id="VertAlign">
+                <option value="0" selected>Top</option>
+                <option value="1">Center</option>
+                <option value="2">Bottom</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group 4 -->
+        <div class="group">
+          <h3>Slant</h3>
+
+          <div class="grid-2">
+            <div class="input-row">
+              <label>Slant Angle</label>
+              <input id="SlantAngle" type="number" value="55" />
+            </div>
+
+            <div class="input-row">
+              <label>Slant Gap</label>
+              <input id="SlantGap" type="number" value="10" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div id="printArea">
-        <svg id="paper" viewBox="0 0 210 297"></svg>
+      <svg id="paper" viewBox="0 0 210 297"></svg>
     </div>
-
-    <div>
-            <button class="action-button" id="PrintBtn">Print</button>
-    </div>
-
-    <div id="footer">
-        <p>Created by Kamalesh Bhamare</p>
-    </div>
-
-</body>
-
+    <footer>
+      <p>Created by Kamalesh Bhamare</p>
+    </footer>
+  </body>
 </html>
