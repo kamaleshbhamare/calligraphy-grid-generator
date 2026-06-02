@@ -192,15 +192,14 @@ generateControls.forEach((control) => {
 
 // Print functionality
 document.getElementById('PrintBtn').addEventListener('click', function () {
-  window.print();
-  //   const printWindow = window.open('', '_blank');
-  //   printWindow.document.write('<html><head><title>Print Grid</title></head><body>');
-  //   printWindow.document.write(document.getElementById('paper').outerHTML);
-  //   printWindow.document.write('</body></html>');
-  //   printWindow.document.close();
-  //   printWindow.focus();
-  //   printWindow.print();
-  //   printWindow.close();
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write('<html><head></head><body>');
+  printWindow.document.write(document.getElementById('paper').outerHTML);
+  printWindow.document.write('</body></html>');
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+  printWindow.close();
 });
 
 generateGrid();
