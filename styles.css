@@ -96,13 +96,48 @@ body {
 
 /* Each section group */
 .group {
-  padding: 12px;
+  padding: 0;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   background: #fff;
+  overflow: hidden;
 }
 
-/* Group title */
+.group summary {
+  list-style: none;
+  margin: 0;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  background: #f7f8fb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.group summary::-webkit-details-marker {
+  display: none;
+}
+
+.group summary::after {
+  content: "\25be";
+  transition: transform 0.2s ease;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.group[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.group > *:not(summary) {
+  padding: 16px;
+}
+
+/* Group title fallback (if any) */
 .group h3 {
   margin: 0 0 12px 0;
   font-size: 1rem;

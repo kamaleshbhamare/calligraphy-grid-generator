@@ -13,9 +13,7 @@ function generateGrid() {
   svg.innerHTML = ''; // Clear previous grid
 
   // Draw Base Lines
-  // Calculate space between base lines based on lines selected and their distance
-  // Default margin between lines if only one line is selected
-
+  // Calculate space between base lines based on lines selected and their distance ß
   const gapBetweenLines = parseInt(document.getElementById('RowGaps').value);
   const orientation = document.querySelector('input[name="orientation"]:checked').value;
   const vertAlign = document.getElementById('VertAlign').value;
@@ -30,7 +28,7 @@ function generateGrid() {
   printArea.classList.toggle('landscape', orientation === 'landscape');
   printArea.classList.toggle('portrait', orientation !== 'landscape');
 
-  let baseLineSpacing = 0;
+  let spaceForEachRow = 0;
   let baseLineStartY = 0;
   let waistLineStartY = 0;
   let AscenderLine1StartY = 0;
@@ -39,86 +37,141 @@ function generateGrid() {
   let DescenderLine2StartY = 0;
 
   if (document.getElementById('Asc2').value > 0) {
-    baseLineSpacing += parseInt(document.getElementById('Asc2').value);
-    AscenderLine1StartY += baseLineSpacing;
+    spaceForEachRow += parseInt(document.getElementById('Asc2').value);
+    AscenderLine1StartY += spaceForEachRow;
   }
 
   if (document.getElementById('Asc1').value > 0) {
-    baseLineSpacing += parseInt(document.getElementById('Asc1').value);
+    spaceForEachRow += parseInt(document.getElementById('Asc1').value);
   }
 
   if (document.getElementById('XHeight').value > 0) {
-    waistLineStartY += baseLineSpacing;
-    baseLineSpacing += parseInt(document.getElementById('XHeight').value);
+    waistLineStartY += spaceForEachRow;
+    spaceForEachRow += parseInt(document.getElementById('XHeight').value);
   }
 
-  baseLineStartY += baseLineSpacing;
+  baseLineStartY += spaceForEachRow;
 
   if (document.getElementById('Desc1').value > 0) {
-    baseLineSpacing += parseInt(document.getElementById('Desc1').value);
-    DescenderLine1StartY += baseLineSpacing;
+    spaceForEachRow += parseInt(document.getElementById('Desc1').value);
+    DescenderLine1StartY += spaceForEachRow;
   }
 
   if (document.getElementById('Desc2').value > 0) {
-    baseLineSpacing += parseInt(document.getElementById('Desc2').value);
-    DescenderLine2StartY += baseLineSpacing;
+    spaceForEachRow += parseInt(document.getElementById('Desc2').value);
+    DescenderLine2StartY += spaceForEachRow;
   }
 
-  baseLineSpacing += gapBetweenLines;
+  spaceForEachRow += gapBetweenLines;
 
   const numRowsInput = document.getElementById('NumRows');
   const requestedRows = Math.max(0, parseInt(numRowsInput.value) || 0);
-  clearDebugLog();
 
-  debugLog(`Requested Rows: ${requestedRows}`);
+  const availableHeight = height;
 
-  const availableHeight = height - marginOffset;
+  // clearDebugLog();
 
-  debugLog(`Available Height: ${availableHeight}`);
-  debugLog(`Base Line Spacing: ${baseLineSpacing}`);
+  // debugLog(`Requested Rows: ${requestedRows}`);
+  // debugLog(`Available Height: ${availableHeight}`);
+  // debugLog(`Margin Offset: ${marginOffset}`);
+  // debugLog(`Space for each row: ${spaceForEachRow}`);
 
-  debugLog(`availableHeight - marginOffset: ${availableHeight - marginOffset + gapBetweenLines}`);
-  debugLog(
-    `(availableHeight - marginOffset) / baseLineSpacing: ${(availableHeight - marginOffset + gapBetweenLines) / baseLineSpacing}`,
-  );
+  // debugLog(`(availableHeight - marginOffset): ${availableHeight - marginOffset}`);
 
   const maxRows =
-    baseLineSpacing > 0
-      ? Math.max(0, Math.floor((availableHeight - marginOffset + gapBetweenLines) / baseLineSpacing))
+    spaceForEachRow > 0
+      ? Math.max(0, Math.floor((availableHeight - marginOffset + gapBetweenLines) / spaceForEachRow))
       : 0;
 
-  debugLog(`Max : ${Math.max(0, Math.floor((availableHeight - marginOffset + gapBetweenLines) / baseLineSpacing))}`);
+  // debugLog(`Max Rows: ${maxRows}`);
+
+  // Update label Number of rows stating max rows that can fit in the available height
+  const NumberOfRowsLabel = document.getElementById('NumberOfRowsLabel');
+  if (NumberOfRowsLabel) {
+    NumberOfRowsLabel.textContent = `Number of rows (max ${maxRows})`;
+  }
 
   numRowsInput.max = maxRows;
   const rows = Math.min(requestedRows, maxRows);
+
   if (requestedRows > maxRows) {
     numRowsInput.value = maxRows;
   }
 
+  // Adjust starting Y positions based on vertical alignment
+  if (vertAlign === '1') {
+    // Center: calculate total grid height and center it
+    const totalGridHeight = rows * spaceForEachRow - gapBetweenLines; // No gap after last row
+    const startY = marginOffset + (availableHeight - marginOffset - totalGridHeight) / 2;
+
+    baseLineStartY += startY;
+    waistLineStartY += startY;
+    AscenderLine1StartY += startY;
+    AscenderLine2StartY += startY;
+    DescenderLine1StartY += startY;
+    DescenderLine2StartY += startY;
+  } else if (vertAlign === '2') {
+    // Bottom: start from the bottom and move upwards
+    const totalGridHeight = rows * spaceForEachRow - gapBetweenLines; // No gap after last row
+    const startY = availableHeight - totalGridHeight - marginOffset;
+
+    baseLineStartY += startY;
+    waistLineStartY += startY;
+    AscenderLine1StartY += startY;
+    AscenderLine2StartY += startY;
+    DescenderLine1StartY += startY;
+    DescenderLine2StartY += startY;
+  } else if (vertAlign === '0') {
+    // Top: start from marginOffset, no change needed
+
+    baseLineStartY += marginOffset;
+    waistLineStartY += marginOffset;
+    AscenderLine1StartY += marginOffset;
+    AscenderLine2StartY += marginOffset;
+    DescenderLine1StartY += marginOffset;
+    DescenderLine2StartY += marginOffset;
+  }
+
+  const baseLineThickness = parseFloat(document.getElementById('BaseLineThickness').value) || 1;
+  const waistLineThickness = parseFloat(document.getElementById('WaistLineThickness').value) * 0.8 || 0.8;
+  const ascender1Thickness = parseFloat(document.getElementById('Asc1Thickness').value) || 1;
+  const descender1Thickness = parseFloat(document.getElementById('Desc1Thickness').value) || 1;
+  const ascender2Thickness = parseFloat(document.getElementById('Asc2Thickness').value) * 0.8 || 0.8;
+  const descender2Thickness = parseFloat(document.getElementById('Desc2Thickness').value) * 0.8 || 0.8;
+  const slantLineThickness = parseFloat(document.getElementById('SlantLineThickness').value) || 1;
+
+  const baseLineColor = document.getElementById('BaseLineColor').value || '#bbb';
+  const waistLineColor = document.getElementById('WaistLineColor').value || '#bbb';
+  const ascender1Color = document.getElementById('Asc1Color').value || '#555';
+  const descender1Color = document.getElementById('Desc1Color').value || '#bbb';
+  const ascender2Color = document.getElementById('Asc2Color').value || 'red';
+  const descender2Color = document.getElementById('Desc2Color').value || '#bbb';
+  const slantLineColor = document.getElementById('SlantLineColor').value || '#555';
+
   // Draw Base Lines
   for (let row = 0; row < rows; row++) {
-    const y = marginOffset + baseLineStartY + row * baseLineSpacing;
+    const y = baseLineStartY + row * spaceForEachRow;
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('x1', '0');
     line.setAttribute('y1', y);
     line.setAttribute('x2', width);
     line.setAttribute('y2', y);
-    line.setAttribute('stroke', '#555');
-    line.setAttribute('stroke-width', '0.2');
+    line.setAttribute('stroke', baseLineColor);
+    line.setAttribute('stroke-width', baseLineThickness);
     svg.appendChild(line);
   }
 
   // Draw Waist Lines
   if (document.getElementById('XHeight').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = marginOffset + waistLineStartY + row * baseLineSpacing;
+      const y = waistLineStartY + row * spaceForEachRow;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
       line.setAttribute('x2', width);
       line.setAttribute('y2', y);
-      line.setAttribute('stroke', '#555');
-      line.setAttribute('stroke-width', '0.2');
+      line.setAttribute('stroke', waistLineColor);
+      line.setAttribute('stroke-width', waistLineThickness);
       svg.appendChild(line);
     }
   }
@@ -126,14 +179,14 @@ function generateGrid() {
   // Draw Ascender 1 Lines
   if (document.getElementById('Asc1').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = marginOffset + AscenderLine1StartY + row * baseLineSpacing;
+      const y = AscenderLine1StartY + row * spaceForEachRow;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
       line.setAttribute('x2', width);
       line.setAttribute('y2', y);
-      line.setAttribute('stroke', '#555');
-      line.setAttribute('stroke-width', '0.2');
+      line.setAttribute('stroke', ascender1Color);
+      line.setAttribute('stroke-width', ascender1Thickness);
       svg.appendChild(line);
     }
   }
@@ -141,14 +194,14 @@ function generateGrid() {
   // Draw Ascender 2 Lines
   if (document.getElementById('Asc2').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = marginOffset + AscenderLine2StartY + row * baseLineSpacing;
+      const y = AscenderLine2StartY + row * spaceForEachRow;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
       line.setAttribute('x2', width);
       line.setAttribute('y2', y);
-      line.setAttribute('stroke', 'red');
-      line.setAttribute('stroke-width', '0.2');
+      line.setAttribute('stroke', ascender2Color);
+      line.setAttribute('stroke-width', ascender2Thickness);
       svg.appendChild(line);
     }
   }
@@ -156,14 +209,14 @@ function generateGrid() {
   // Draw Descender 1 Lines
   if (document.getElementById('Desc1').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = marginOffset + DescenderLine1StartY + row * baseLineSpacing;
+      const y = DescenderLine1StartY + row * spaceForEachRow;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
       line.setAttribute('x2', width);
       line.setAttribute('y2', y);
-      line.setAttribute('stroke', '#555');
-      line.setAttribute('stroke-width', '0.2');
+      line.setAttribute('stroke', descender1Color);
+      line.setAttribute('stroke-width', descender1Thickness);
       svg.appendChild(line);
     }
   }
@@ -171,14 +224,14 @@ function generateGrid() {
   // Draw Descender 2 Lines
   if (document.getElementById('Desc2').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = marginOffset + DescenderLine2StartY + row * baseLineSpacing;
+      const y = DescenderLine2StartY + row * spaceForEachRow;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
       line.setAttribute('x2', width);
       line.setAttribute('y2', y);
-      line.setAttribute('stroke', '#555');
-      line.setAttribute('stroke-width', '0.2');
+      line.setAttribute('stroke', descender2Color);
+      line.setAttribute('stroke-width', descender2Thickness);
       svg.appendChild(line);
     }
   }
@@ -218,8 +271,8 @@ function generateGrid() {
     line.setAttribute('x2', x2);
     line.setAttribute('y2', y2);
 
-    line.setAttribute('stroke', '#bbb');
-    line.setAttribute('stroke-width', '0.2');
+    line.setAttribute('stroke', slantLineColor);
+    line.setAttribute('stroke-width', slantLineThickness);
 
     svg.appendChild(line);
   }
@@ -229,7 +282,7 @@ function generateGrid() {
 const generateControls = document.querySelectorAll('.controls input, .controls select');
 generateControls.forEach((control) => {
   control.addEventListener('input', generateGrid);
-  control.addEventListener('change', generateGrid);
+  // control.addEventListener('change', generateGrid);
 });
 
 // Print functionality
@@ -309,6 +362,7 @@ function updateVerticalAlignmentMargins() {
     // Top or Bottom: enable MarginOffset
     marginOffset.disabled = false;
   }
+  generateGrid();
 }
 
 document.getElementById('VertAlign').addEventListener('change', updateVerticalAlignmentMargins);

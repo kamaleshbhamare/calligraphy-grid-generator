@@ -1,120 +1,200 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Calligraphy Grid Generator</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js" defer></script>
-  </head>
-  <body>
-    <h2>Calligraphy Grid Generator</h2>
-    <div class="controls">
-      <div class="segmented-control">
-        <input type="radio" id="portrait" name="orientation" value="portrait" checked />
-        <label for="portrait">Portrait</label>
 
-        <input type="radio" id="landscape" name="orientation" value="landscape" />
-        <label for="landscape">Landscape</label>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calligraphy Grid Generator</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js" defer></script>
+</head>
 
-        <button class="action-button" id="DownloadPDFBtn">Download PDF</button>
-      </div>
-      <div class="settings">
-        <!-- Group 1 -->
-        <div class="group">
-          <h3>x Height</h3>
+<body>
+  <h2>Calligraphy Grid Generator</h2>
+  <div class="controls">
+    <div class="segmented-control">
+      <input type="radio" id="portrait" name="orientation" value="portrait" checked />
+      <label for="portrait">Portrait</label>
+
+      <input type="radio" id="landscape" name="orientation" value="landscape" />
+      <label for="landscape">Landscape</label>
+
+      <button class="action-button" id="DownloadPDFBtn">Download PDF</button>
+    </div>
+    <div class="settings">
+      <!-- Group 1 -->
+      <details class="group" open>
+        <summary>x Height</summary>
+
+        <div class="input-row">
+          <label for="XHeight">x Height</label>
+          <input id="XHeight" type="number" value="10" />
+        </div>
+      </details>
+
+      <!-- Group 2 -->
+      <details class="group" open>
+        <summary>Ascender / Descender</summary>
+
+        <div class="grid-2">
+          <div class="input-row">
+            <label for="Asc1">Ascender 1</label>
+            <input id="Asc1" type="number" value="10" />
+          </div>
 
           <div class="input-row">
-            <label>x Height</label>
-            <input id="XHeight" type="number" value="10" />
+            <label for="Desc1">Descender 1</label>
+            <input id="Desc1" type="number" value="10" />
+          </div>
+
+          <div class="input-row">
+            <label for="Asc2">Ascender 2</label>
+            <input id="Asc2" type="number" value="5" />
+          </div>
+
+          <div class="input-row">
+            <label for="Desc2">Descender 2</label>
+            <input id="Desc2" type="number" value="5" />
           </div>
         </div>
+      </details>
 
-        <!-- Group 2 -->
-        <div class="group">
-          <h3>Ascender / Descender</h3>
+      <!-- Group 3 -->
+      <details class="group" open>
+        <summary>Layout</summary>
 
-          <div class="grid-2">
-            <div class="input-row">
-              <label>Ascender 1</label>
-              <input id="Asc1" type="number" value="10" />
-            </div>
+        <div class="grid-2">
+          <div class="input-row">
+            <label id="NumberOfRowsLabel" for="NumRows">Number of rows</label>
+            <input id="NumRows" type="number" value="10" />
+          </div>
 
-            <div class="input-row">
-              <label>Descender 1</label>
-              <input id="Desc1" type="number" value="10" />
-            </div>
+          <div class="input-row">
+            <label for="RowGaps">Row gaps</label>
+            <input id="RowGaps" type="number" value="10" />
+          </div>
 
-            <div class="input-row">
-              <label>Ascender 2</label>
-              <input id="Asc2" type="number" value="5" />
-            </div>
+          <div class="input-row">
+            <label for="VertAlign">Vertical alignment</label>
+            <select id="VertAlign">
+              <option value="0" selected>Top</option>
+              <option value="1">Center</option>
+              <option value="2">Bottom</option>
+            </select>
+          </div>
 
-            <div class="input-row">
-              <label>Descender 2</label>
-              <input id="Desc2" type="number" value="5" />
-            </div>
+          <div class="input-row">
+            <label for="MarginOffset">Margin offset</label>
+            <input id="MarginOffset" type="number" value="10" />
           </div>
         </div>
+      </details>
 
-        <!-- Group 3 -->
-        <div class="group">
-          <h3>Layout</h3>
+      <!-- Group 4 -->
+      <details class="group" open>
+        <summary>Slant</summary>
 
-          <div class="grid-2">
-            <div class="input-row">
-              <label>Number of rows</label>
-              <input id="NumRows" type="number" value="10" />
-            </div>
+        <div class="grid-2">
+          <div class="input-row">
+            <label for="SlantAngle">Slant angle</label>
+            <input id="SlantAngle" type="number" value="55" />
+          </div>
 
-            <div class="input-row">
-              <label>Row gaps</label>
-              <input id="RowGaps" type="number" value="10" />
-            </div>
-
-            <div class="input-row">
-              <label>Vertical alignment</label>
-              <select id="VertAlign">
-                <option value="0" selected>Top</option>
-                <option value="1">Center</option>
-                <option value="2">Bottom</option>
-              </select>
-            </div>
-
-            <div class="input-row">
-              <label>Margin offset</label>
-              <input id="MarginOffset" type="number" value="10" />
-            </div>
+          <div class="input-row">
+            <label for="SlantGap">Slant gap</label>
+            <input id="SlantGap" type="number" value="10" />
           </div>
         </div>
+      </details>
 
-        <!-- Group 4 -->
-        <div class="group">
-          <h3>Slant</h3>
+      <!-- Group 5 -->
+      <details class="group" open>
+        <summary>Line thickness</summary>
 
-          <div class="grid-2">
-            <div class="input-row">
-              <label>Slant angle</label>
-              <input id="SlantAngle" type="number" value="55" />
-            </div>
+        <div class="grid-2">
+          <div class="input-row">
+            <label for="BaseLineThickness">Base line thickness</label>
+            <input id="BaseLineThickness" type="number" value="0.3" />
+          </div>
+          <div class="input-row">
+            <label for="WaistLineThickness">Waist line thickness</label>
+            <input id="WaistLineThickness" type="number" value="0.2" />
+          </div>
+          <div class="input-row">
+            <label for="Asc1Thickness">Ascender 1 thickness</label>
+            <input id="Asc1Thickness" type="number" value="0.2" />
+          </div>
 
-            <div class="input-row">
-              <label>Slant gap</label>
-              <input id="SlantGap" type="number" value="10" />
-            </div>
+          <div class="input-row">
+            <label for="Desc1Thickness">Descender 1 thickness</label>
+            <input id="Desc1Thickness" type="number" value="0.2" />
+          </div>
+          <div class="input-row">
+            <label for="Asc2Thickness">Ascender 2 thickness</label>
+            <input id="Asc2Thickness" type="number" value="0.2" />
+          </div>
+
+          <div class="input-row">
+            <label for="Desc2Thickness">Descender 2 thickness</label>
+            <input id="Desc2Thickness" type="number" value="0.2" />
+          </div>
+
+          <div class="input-row">
+            <label for="SlantLineThickness">Slant line thickness</label>
+            <input id="SlantLineThickness" type="number" value="0.2" />
           </div>
         </div>
+      </details>
 
-        <pre id="debug"></pre>
-      </div>
+      <!-- Group 6 -->
+      <details class="group" open>
+        <summary>Line colors</summary>
+        <div class="grid-2">
+          <div class="input-row">
+            <label for="BaseLineColor">Base line color</label>
+            <input id="BaseLineColor" type="color" value="#bbbbbb" />
+          </div>
+          <div class="input-row">
+            <label for="WaistLineColor">Waist line color</label>
+            <input id="WaistLineColor" type="color" value="#bbbbbb" />
+          </div>
+          <div class="input-row">
+            <label for="Asc1Color">Ascender 1 line color</label>
+            <input id="Asc1Color" type="color" value="#bbbbbb" />
+          </div>
+
+          <div class="input-row">
+            <label for="Desc1Color">Descender 1 line color</label>
+            <input id="Desc1Color" type="color" value="#bbbbbb" />
+          </div>
+          <div class="input-row">
+            <label for="Asc2Color">Ascender 2 line color</label>
+            <input id="Asc2Color" type="color" value="#bbbbbb" />
+          </div>
+
+          <div class="input-row">
+            <label for="Desc2Color">Descender 2 line color</label>
+            <input id="Desc2Color" type="color" value="#bbbbbb" />
+          </div>
+
+          <div class="input-row">
+            <label for="SlantLineColor">Slant line color</label>
+            <input id="SlantLineColor" type="color" value="#bbbbbb" />
+          </div>
+        </div>
+      </details>
+
+      <!-- <pre id="debug"></pre> -->
     </div>
+  </div>
 
-    <div id="printArea">
-      <svg id="paper" viewBox="0 0 210 297"></svg>
-    </div>
-    <footer>
-      <p>Created by Kamalesh Bhamare</p>
-    </footer>
-  </body>
+  <div id="printArea">
+    <svg id="paper" viewBox="0 0 210 297"></svg>
+  </div>
+  <footer>
+    <p>Created by Kamalesh Bhamare</p>
+  </footer>
+</body>
+
 </html>
