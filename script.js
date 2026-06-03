@@ -1,3 +1,13 @@
+function setPrintOrientation(orientation) {
+  let styleEl = document.getElementById('print-orientation-style');
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'print-orientation-style';
+    document.head.appendChild(styleEl);
+  }
+  styleEl.textContent = `@media print { @page { size: ${orientation}; margin: 0; } }`;
+}
+
 function generateGrid() {
   const svg = document.getElementById('paper');
   svg.innerHTML = ''; // Clear previous grid
@@ -6,23 +16,27 @@ function generateGrid() {
   // Calculate space between base lines based on lines selected and their distance
   // Default margin between lines if only one line is selected
 
-  const marginBetweenLines = parseInt(document.getElementById('RowGaps').value);
+  const gapBetweenLines = parseInt(document.getElementById('RowGaps').value);
   const orientation = document.querySelector('input[name="orientation"]:checked').value;
+  const vertAlign = document.getElementById('VertAlign').value;
+  const marginOffset = parseInt(document.getElementById('MarginOffset').value) || 0;
+
   const width = orientation === 'landscape' ? 297 : 210;
   const height = orientation === 'landscape' ? 210 : 297;
   svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  setPrintOrientation(orientation);
 
   const printArea = document.getElementById('printArea');
   printArea.classList.toggle('landscape', orientation === 'landscape');
   printArea.classList.toggle('portrait', orientation !== 'landscape');
 
   let baseLineSpacing = 0;
-  let baseLineStartY = marginBetweenLines;
-  let waistLineStartY = marginBetweenLines;
-  let AscenderLine1StartY = marginBetweenLines;
-  let AscenderLine2StartY = marginBetweenLines;
-  let DescenderLine1StartY = marginBetweenLines;
-  let DescenderLine2StartY = marginBetweenLines;
+  let baseLineStartY = 0;
+  let waistLineStartY = 0;
+  let AscenderLine1StartY = 0;
+  let AscenderLine2StartY = 0;
+  let DescenderLine1StartY = 0;
+  let DescenderLine2StartY = 0;
 
   if (document.getElementById('Asc2').value > 0) {
     baseLineSpacing += parseInt(document.getElementById('Asc2').value);
@@ -50,12 +64,40 @@ function generateGrid() {
     DescenderLine2StartY += baseLineSpacing;
   }
 
-  const rows = Math.max(0, parseInt(document.getElementById('NumRows').value) || 0);
-  baseLineSpacing += marginBetweenLines;
+  baseLineSpacing += gapBetweenLines;
+
+  const numRowsInput = document.getElementById('NumRows');
+  const requestedRows = Math.max(0, parseInt(numRowsInput.value) || 0);
+  clearDebugLog();
+
+  debugLog(`Requested Rows: ${requestedRows}`);
+
+  const availableHeight = height - marginOffset;
+
+  debugLog(`Available Height: ${availableHeight}`);
+  debugLog(`Base Line Spacing: ${baseLineSpacing}`);
+
+  debugLog(`availableHeight - marginOffset: ${availableHeight - marginOffset + gapBetweenLines}`);
+  debugLog(
+    `(availableHeight - marginOffset) / baseLineSpacing: ${(availableHeight - marginOffset + gapBetweenLines) / baseLineSpacing}`,
+  );
+
+  const maxRows =
+    baseLineSpacing > 0
+      ? Math.max(0, Math.floor((availableHeight - marginOffset + gapBetweenLines) / baseLineSpacing))
+      : 0;
+
+  debugLog(`Max : ${Math.max(0, Math.floor((availableHeight - marginOffset + gapBetweenLines) / baseLineSpacing))}`);
+
+  numRowsInput.max = maxRows;
+  const rows = Math.min(requestedRows, maxRows);
+  if (requestedRows > maxRows) {
+    numRowsInput.value = maxRows;
+  }
 
   // Draw Base Lines
   for (let row = 0; row < rows; row++) {
-    const y = baseLineStartY + row * baseLineSpacing;
+    const y = marginOffset + baseLineStartY + row * baseLineSpacing;
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('x1', '0');
     line.setAttribute('y1', y);
@@ -69,7 +111,7 @@ function generateGrid() {
   // Draw Waist Lines
   if (document.getElementById('XHeight').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = waistLineStartY + row * baseLineSpacing;
+      const y = marginOffset + waistLineStartY + row * baseLineSpacing;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
@@ -84,7 +126,7 @@ function generateGrid() {
   // Draw Ascender 1 Lines
   if (document.getElementById('Asc1').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = AscenderLine1StartY + row * baseLineSpacing;
+      const y = marginOffset + AscenderLine1StartY + row * baseLineSpacing;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
@@ -99,7 +141,7 @@ function generateGrid() {
   // Draw Ascender 2 Lines
   if (document.getElementById('Asc2').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = AscenderLine2StartY + row * baseLineSpacing;
+      const y = marginOffset + AscenderLine2StartY + row * baseLineSpacing;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
@@ -114,7 +156,7 @@ function generateGrid() {
   // Draw Descender 1 Lines
   if (document.getElementById('Desc1').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = DescenderLine1StartY + row * baseLineSpacing;
+      const y = marginOffset + DescenderLine1StartY + row * baseLineSpacing;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
@@ -129,7 +171,7 @@ function generateGrid() {
   // Draw Descender 2 Lines
   if (document.getElementById('Desc2').value > 0) {
     for (let row = 0; row < rows; row++) {
-      const y = DescenderLine2StartY + row * baseLineSpacing;
+      const y = marginOffset + DescenderLine2StartY + row * baseLineSpacing;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', y);
@@ -191,15 +233,101 @@ generateControls.forEach((control) => {
 });
 
 // Print functionality
-document.getElementById('PrintBtn').addEventListener('click', function () {
-  const printWindow = window.open('', '_blank');
-  printWindow.document.write('<html><head></head><body>');
-  printWindow.document.write(document.getElementById('paper').outerHTML);
-  printWindow.document.write('</body></html>');
-  printWindow.document.close();
-  printWindow.focus();
-  printWindow.print();
-  printWindow.close();
+document.getElementById('DownloadPDFBtn').addEventListener('click', async function () {
+  // Export the SVG as an image and embed in a PDF using jsPDF
+  try {
+    const orientation = document.querySelector('input[name="orientation"]:checked').value;
+    const width = orientation === 'landscape' ? 297 : 210;
+    const height = orientation === 'landscape' ? 210 : 297;
+
+    const svg = document.getElementById('paper');
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+
+    const img = new Image();
+    img.onload = function () {
+      // rasterize at a reasonable resolution
+      const scale = 3; // increase for higher quality
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(width * scale);
+      canvas.height = Math.round(height * scale);
+      const ctx = canvas.getContext('2d');
+      // white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const imgData = canvas.toDataURL('image/png');
+
+      if (window.jspdf && window.jspdf.jsPDF) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+          orientation: orientation === 'landscape' ? 'landscape' : 'portrait',
+          unit: 'mm',
+          format: [width, height],
+        });
+        doc.addImage(imgData, 'PNG', 0, 0, width, height);
+        doc.save('calligraphy-grid.pdf');
+      } else if (window.jsPDF) {
+        const doc = new window.jsPDF({
+          orientation: orientation === 'landscape' ? 'landscape' : 'portrait',
+          unit: 'mm',
+          format: [width, height],
+        });
+        doc.addImage(imgData, 'PNG', 0, 0, width, height);
+        doc.save('calligraphy-grid.pdf');
+      } else {
+        // fallback: open raster image in new tab for manual save
+        window.open(imgData, '_blank');
+      }
+
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = function () {
+      URL.revokeObjectURL(url);
+      alert('Failed to render SVG for PDF export.');
+    };
+    img.src = url;
+  } catch (err) {
+    console.error(err);
+    alert('PDF export failed. Falling back to print.');
+    window.print();
+  }
 });
 
+// Handle vertical alignment margin field enable/disable
+function updateVerticalAlignmentMargins() {
+  const vertAlign = document.getElementById('VertAlign').value;
+  const marginOffset = document.getElementById('MarginOffset');
+
+  if (vertAlign === '1') {
+    // Center: disable margin fields,   enable MarginOffset
+    marginOffset.disabled = true;
+    marginOffset.value = '0';
+  } else {
+    // Top or Bottom: enable MarginOffset
+    marginOffset.disabled = false;
+  }
+}
+
+document.getElementById('VertAlign').addEventListener('change', updateVerticalAlignmentMargins);
+updateVerticalAlignmentMargins();
+
 generateGrid();
+
+function debugLog(message) {
+  const debugEl = document.getElementById('debug');
+  if (debugEl) {
+    debugEl.textContent += message + '\n';
+  } else {
+    console.log(message);
+  }
+}
+
+function clearDebugLog() {
+  const debugEl = document.getElementById('debug');
+  if (debugEl) {
+    debugEl.textContent = '';
+  }
+}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Calligraphy Grid Generator</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="script.js" defer></script>
   </head>
   <body>
@@ -17,15 +18,15 @@
         <input type="radio" id="landscape" name="orientation" value="landscape" />
         <label for="landscape">Landscape</label>
 
-        <button class="action-button" id="PrintBtn">Print</button>
+        <button class="action-button" id="DownloadPDFBtn">Download PDF</button>
       </div>
       <div class="settings">
         <!-- Group 1 -->
         <div class="group">
-          <h3>X Height</h3>
+          <h3>x Height</h3>
 
           <div class="input-row">
-            <label>X Height</label>
+            <label>x Height</label>
             <input id="XHeight" type="number" value="10" />
           </div>
         </div>
@@ -63,22 +64,27 @@
 
           <div class="grid-2">
             <div class="input-row">
-              <label>Number of Rows</label>
+              <label>Number of rows</label>
               <input id="NumRows" type="number" value="10" />
             </div>
 
             <div class="input-row">
-              <label>Row Gaps</label>
+              <label>Row gaps</label>
               <input id="RowGaps" type="number" value="10" />
             </div>
 
             <div class="input-row">
-              <label>Vertical Alignment</label>
+              <label>Vertical alignment</label>
               <select id="VertAlign">
                 <option value="0" selected>Top</option>
                 <option value="1">Center</option>
                 <option value="2">Bottom</option>
               </select>
+            </div>
+
+            <div class="input-row">
+              <label>Margin offset</label>
+              <input id="MarginOffset" type="number" value="10" />
             </div>
           </div>
         </div>
@@ -89,16 +95,18 @@
 
           <div class="grid-2">
             <div class="input-row">
-              <label>Slant Angle</label>
+              <label>Slant angle</label>
               <input id="SlantAngle" type="number" value="55" />
             </div>
 
             <div class="input-row">
-              <label>Slant Gap</label>
+              <label>Slant gap</label>
               <input id="SlantGap" type="number" value="10" />
             </div>
           </div>
         </div>
+
+        <pre id="debug"></pre>
       </div>
     </div>
 
